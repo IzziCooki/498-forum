@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Session Demo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <h1>Session Demo Application</h1>
+
+    <div class="card">
+        <h2>Login</h2>
+        <form method="POST" action="/login">
+            <p>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </p>
+
+            <p>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </p>
+
+            <div class="actions">
+                <button type="submit">Login</button>
+                <a href="/">Cancel</a>
+            </div>
+        </form>
+
+        {{#if error}}
+        <p class="error">Please enter both username and password.</p>
+        {{/if}}
+    </div>
+</body>
+
+</html>
