@@ -1,38 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="card welcome-card">
+    <h2>Welcome to the Wild West Forum! 🤠</h2>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css"/>
-    <title>Session Demo</title>
-</head>
-
-<body>
-    <h1>Session Demo Application</h1>
-
-    <div class="card">
-        <h2>Current User Information</h2>
-        <div class="user-info">
-            <p><strong>Name:</strong> {{user.name}}</p>
-            <p><strong>Status:</strong> {{#if user.isLoggedIn}}Logged In{{else}}Guest{{/if}}</p>
-            {{#if user.isLoggedIn}}
-            <p><strong>Login Time:</strong> {{user.loginTime}}</p>
-            <p><strong>Visit Count:</strong> {{user.visitCount}}</p>
-            {{/if}}
-        </div>
-
+    {{#if user.isLoggedIn}}
+        {{! Content for logged-in users }}
+        <p>Howdy, {{user.name}}! Ready to join the discussion?</p>
         <div class="actions">
-            {{#if user.isLoggedIn}}
-            <a href="/profile">View Profile</a>
-            <form method="POST" action="/logout">
-                <button type="submit">Logout</button>
-            </form>
-            {{else}}
-            <a href="/login">Login</a>
-            {{/if}}
+            <a href="/comments" class="button button-primary">View Comments</a>
+            <a href="/comment/new" class="button">Post a New Comment</a>
+            <a href="/profile" class="button button-secondary">View Profile</a>
         </div>
-    </div>
-</body>
+        {{! Optional: Maybe show a few *recent* comments here later? }}
 
-</html>
+    {{else}}
+        {{! Content for guests }}
+        <p>Welcome, stranger! Looks like you ain't logged in yet.</p>
+        <p>Register or log in to post your own comments and join the community.</p>
+        <div class="actions">
+            <a href="/login" class="button button-primary">Login</a>
+            <a href="/register" class="button button-secondary">Register</a>
+        </div>
+    {{/if}}
+
+</div>

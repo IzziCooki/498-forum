@@ -1,13 +1,16 @@
+{{! backend/views/partials/nav.hbs }}
+
 <nav>
   <a href="/">Home</a>
 
-  {{#if user.isLoggedIn}}
-    <span>Welcome, {{user.name}}!</span>
+  {{#if user.isLoggedIn}} {{! Check if the 'user' variable exists (meaning user is logged in) }}
+    <span>Welcome, {{user.name}}!</span> {{! Display the username directly }}
+    <a href="/profile">Profile</a> {{! Added profile link }}
     <a href="/comments">Comments</a>
     <form action="/logout" method="POST" style="display:inline;">
-      <button type="submit">Logout</button>
+      <button type="submit" class="button button-logout">Logout</button> {{! Added classes for styling }}
     </form>
-  {{else}}
+  {{else}} {{! If 'user' does not exist (user is logged out) }}
     <a href="/register">Register</a>
     <a href="/login">Login</a>
   {{/if}}
