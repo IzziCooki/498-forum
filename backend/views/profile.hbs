@@ -1,24 +1,24 @@
-<!DOCTYPE html>
-<html>
+{{! backend/views/profile.hbs }}
 
-<head>
-    <title>Profile - Session Demo</title>
-</head>
+<div class="card profile-card">
+    <h2>Your Sheriff Badge 🤠</h2>
 
-<body>
-    <h1>User Profile</h1>
+    <div class="user-info">
+        <p><strong>Howdy, {{user.name}}!</strong></p>
+        <p>Welcome back to the saloon.</p>
 
-    <h2>Welcome, {{user.name}}!</h2>
-    <p><strong>Login Time:</strong> {{user.loginTime}}</p>
-    <p><strong>Visit Count:</strong> {{user.visitCount}}</p>
+        {{#if user.loginTime}}
+            <p><small>Last seen 'round these parts: {{user.loginTime}}</small></p>
+        {{/if}}
+        {{#if user.visitCount}}
+            <p><small>Number of visits to town: {{user.visitCount}}</small></p>
+        {{/if}}
+        {{! Note: loginTime and visitCount need to be set in the session during POST /login to display }}
+    </div>
 
-    <p>
-        <a href="/">Home</a> |
-    <form method="POST" action="/logout" style="display: inline;">
-        <button type="submit">Logout</button>
-    </form>
-    </p>
+    <div class="actions">
+        <a href="/comments" class="button">See What's New</a>
+        <a href="/comment/new" class="button">Post Your Thoughts</a>
+    </div>
 
-</body>
-
-</html>
+</div>

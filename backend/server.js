@@ -46,9 +46,9 @@ app.use(session({
 app.get('/', (req, res) => {
     let userViewModel = {
             name: "Guest",
-            isLoggedIn: false
-            // loginTime: null, // Can add these back if needed
-            // visitCount: 0
+            isLoggedIn: false,
+            loginTime: new Date(), // Can add these back if needed
+            visitCount: 0
         };
 
         // Check session data set during login
@@ -105,19 +105,22 @@ app.get('/register', (req, res) => {
 
 
 // Profile page - now requires login
-app.get('/profile', (req, res) => {
-    if (!req.session.isLoggedIn) {
-        return res.redirect('/login');
-    }
-
-    const user = {
+app.get('/profile', ensureAuthenticated, (req, res) => {
+// Construct the user object for the view
+    const userViewModel = {
         name: req.session.username,
-        loginTime: req.session.loginTime,
-        visitCount: req.session.visitCount || 0
+        isLoggedIn: req.session.isLoggedIn,
+        loginTime: req.session.loginTime, // Uncomment if you add loginTime to session
+        visitCount: req.session.visitCount += 1 || 0 // Uncomment if you add visitCount to session
     };
 
-    res.render('profile', { user: user });
+    res.render('profile', {
+        layout: 'layout/main', // *** Specify the main layout ***
+        title: 'Your Profile', // Add a title
+        user: userViewModel    // Pass the user data object
+    });
 });
+
 
 // Login Page (GET)
 app.get('/login', (req, res) => {
@@ -148,8 +151,8 @@ app.post('/login', (req, res) => {
             // *** Set multiple properties on req.session ***
             req.session.isLoggedIn = true;
             req.session.username = user.username; // Store the actual username
-            // req.session.loginTime = new Date().toISOString(); // Optional
-            // req.session.visitCount = 0; // Optional
+            req.session.loginTime = new Date().toISOString(); // Optional
+            req.session.visitCount = 0; // Optional
 
             console.log(`User ${username} logged in.`);
             res.redirect('/');
@@ -160,22 +163,6 @@ app.post('/login', (req, res) => {
                 error: 'Invalid username or password.'
             });
         }
-});
-
-// Profile Page (GET - Requires Login) - Adapt if needed
-app.get('/profile', ensureAuthenticated, (req, res) => {
-     // Construct view model if needed, or pass session directly if profile.hbs expects it
-     const userViewModel = {
-        name: req.session.username,
-        // loginTime: req.session.loginTime, // Add if needed by profile.hbs
-        // visitCount: req.session.visitCount // Add if needed by profile.hbs
-    };
-    res.render('profile', {
-        layout: 'layout/main',
-        title: 'Profile',
-        user: userViewModel // Pass the constructed object
-        // Or directly: username: req.session.username
-    });
 });
 
 
