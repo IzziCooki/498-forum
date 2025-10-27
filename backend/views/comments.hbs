@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Comments</title>
+</head>
+
+<body>
+    <h1>Comments</h1>
+
+    <div class="card">
+        <h2>Comments</h2>
+        {{#if comments.length}}
+            <ul>
+                {{#each comments}}
+                    <li>
+                        <strong>{{this.author}}</strong>:<br />
+                        {{this.text}}
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p>No comments yet.</p>
+        {{/if}}
+    </div>
+        {{#if user.isLoggedIn}}
+            <p>Welcome, {{user.name}}! You can add a new comment <a href="/comment/new">here</a>.</p>
+        {{else}}
+            <p>Please <a href="/login">log in</a> to add a comment.</p>
+        {{/if}}
+    </div>
+</body>
+
+</html>
