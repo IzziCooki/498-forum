@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 8080;
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 app.use(express.json());
 //Form data
 app.use(express.urlencoded({ extended: false }));
@@ -49,7 +51,8 @@ app.get('/', (req, res) => {
         req.session.visitCount = (req.session.visitCount || 0) + 1;
     }
 
-    res.render('home', { user: user });
+    res.render('home', { layout: 'layout/main', title: 'Home', user: user });
+
 });
 
 app.get('/register', (req, res) => {
