@@ -5,17 +5,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - Wild West Forum</title>
-    <link rel="stylesheet" href="/styles.css"> {{! Assuming styles.css is in the public folder }}
+    <link rel="stylesheet" href="/styles.css"> 
 </head>
 
 <body>
-    <h1>Wild West Forum</h1> {{! Or your preferred site title }}
+    <h1>Wild West Forum</h1> 
 
-    <div class="card"> {{! Reusing the card class for similar styling }}
+    <div class="card">
         <h2>Register New Account</h2>
 
         {{#if error}}
-        <p class="error-message">{{error}}</p> {{! Display specific error from server }}
+        <p class="error-message">{{error}}</p> 
         {{/if}}
 
         <form method="POST" action="/register">
@@ -30,16 +30,11 @@
             </p>
 
             <div class="actions">
-                <button type="submit" class="button">Register</button> {{! Added button class }}
-                <a href="/login">Already have an account? Login</a> {{! Link to login }}
+                <button type="submit" class="button">Register</button> 
+                <a href="/login">Already have an account? Login</a> 
             </div>
         </form>
     </div>
-
-    {{! Optional: Add a footer if needed }}
-    {{!-- <footer>
-        <p>&copy; 2025 Wild West Forum</p>
-    </footer> --}}
 </body>
 
 </html>
