@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 7101;
 
 COMMENT_ID_COUNTER = 1; // For comment IDs
 
-let users = [{ username: 'dean', password: '1234' }]; // Stores { username, password }
-let comments = [ // Stores { author, text }
+let users = [{ username: 'dean', password: '1234' }]; 
+let comments = [ 
     { id: COMMENT_ID_COUNTER, author: 'Alice', text: 'Howdy partner!', createdAt: new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'}) },
     { id: COMMENT_ID_COUNTER+=1, author: 'Bob', text: 'This forum is mighty fine.', createdAt: new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'}) }
 ];
@@ -26,16 +26,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 app.use(express.json());
-//Form data
 app.use(express.urlencoded({ extended: false }));
-
 app.use((req, res, next) => {
     console.log(`${req.method} request for '${req.url}'`);
     next();
 });
-
 app.use(session({
-    secret: 'your-secret-key-change-this-in-production',
+    secret: 'fdskfhkdsfhs-fdskjhfkjdshfkjsdf-blkvbjcvlk',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -44,50 +41,46 @@ app.use(session({
     }
 }));
 
-// Home page - shows static user data
+// Home page
 app.get('/', (req, res) => {
     let userViewModel = {
             name: "Guest",
             isLoggedIn: false,
-            loginTime: new Date(), // Can add these back if needed
-            visitCount: 0
         };
 
-        // Check session data set during login
         if (req.session.isLoggedIn && req.session.username) {
             userViewModel = {
                 name: req.session.username,
                 isLoggedIn: true
-                // loginTime: req.session.loginTime,
-                // visitCount: req.session.visitCount // Make sure to increment elsewhere if using
             };
         }
 
         res.render('home', {
             layout: 'layout/main',
             title: 'Wild West Forum',
-            user: userViewModel // Pass the constructed object
-            // comments: comments // Removed comments from home page
+            user: userViewModel 
         });
 
 });
+
+
+// Register
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
 
-    // Basic validation
     if (!username || !password) {
         return res.render('register', {
-            // layout: 'layout/main', // If using layout
+            layout: 'layout/main',
             title: 'Register',
             error: 'Username and password are required.'
         });
     }
 
-    // *** Check if username already exists ***
+    // Check if username already exists 
     const userExists = users.some(user => user.username === username);
     if (userExists) {
         return res.render('register', {
-            // layout: 'layout/main', // If using layout
+            layout: 'layout/main',
             title: 'Register',
             error: 'Username already taken. Please choose another.'
         });
@@ -95,19 +88,18 @@ app.post('/register', (req, res) => {
 
     // Add new user
     users.push({ username, password });
-    console.log('Registered new user:', username);
-    console.log('Current users:', users); // For debugging
+
     res.redirect('/login');
 });
 
 app.get('/register', (req, res) => {
         return res.render('register', {
-            layout: 'layout/main', // If using layout
+            layout: 'layout/main', 
             title: 'Register'
         });
 });
 
-
+// Profile 
 app.get('/profile', ensureAuthenticated, (req, res) => {
 
     const userViewModel = {
@@ -129,7 +121,7 @@ app.get('/profile', ensureAuthenticated, (req, res) => {
 });
 
 
-// Login Page (GET)
+// Login 
 app.get('/login', (req, res) => {
     if (req.session.isLoggedIn) {
             return res.redirect('/');
@@ -140,7 +132,7 @@ app.get('/login', (req, res) => {
         });
 });
 
-// Login Handler (POST)
+
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
@@ -152,7 +144,7 @@ app.post('/login', (req, res) => {
         }
 
         const user = users.find(u => u.username === username);
-
+        // Create new session if valid
         if (user && user.password === password) {
             req.session.isLoggedIn = true;
             req.session.username = user.username; 
@@ -169,7 +161,7 @@ app.post('/login', (req, res) => {
         }
 });
 
-
+// Comments
 app.get('/comments', ensureAuthenticated, (req, res) => {
   const userViewModel = {
     name: req.session.username,
@@ -228,11 +220,11 @@ const userViewModel = {
 
 app.delete('/comment/:id', ensureAuthenticated, (req, res) => {
 
-    
-
     const commentId = parseInt(req.params.id, 10);
     const commentIndex = comments.findIndex(c => c.id === commentId);
 
+
+    //Check if user is author
     const comment = comments[commentIndex];
     if (comment.author !== req.session.username) {
         console.warn(
@@ -241,7 +233,6 @@ app.delete('/comment/:id', ensureAuthenticated, (req, res) => {
         return res.status(403).send('You are not allowed to delete this comment.');
     }
 
-    // ✅ If authorized, delete it
     comments.splice(commentIndex, 1);
     console.log(`Comment with ID ${commentId} deleted by ${req.session.username}`);
     return res.redirect('/comments');
@@ -253,13 +244,13 @@ app.post('/comment', ensureAuthenticated, (req, res) => {
 const { comment } = req.body;
 
     if (!comment || comment.trim() === '') {
-         // Re-render the page where the form is (e.g., '/comments') with an error
+         // Re-render page if comment is empty
          const userViewModel = { name: req.session.username, isLoggedIn: true };
-         return res.render('comments', { // Assuming form is on comments page
+         return res.render('comments', { 
             layout: 'layout/main',
             title: 'Comments',
             user: userViewModel,
-            comments: comments, // Still need to pass comments when re-rendering
+            comments: comments, 
             commentError: 'Comment cannot be empty.'
         });
     }
@@ -274,6 +265,8 @@ const { comment } = req.body;
     res.redirect('/comments');
 });
 
+
+// Logout
 app.post('/logout', (req, res) => {
     const username = req.session.username;
         req.session.destroy((err) => {
