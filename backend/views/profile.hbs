@@ -16,9 +16,43 @@
         {{! Note: loginTime and visitCount need to be set in the session during POST /login to display }}
     </div>
 
+    <div>
+        <h3>Your Comments 📝</h3>
+
+            {{#if comments}}
+                        {{#each comments}}
+                            <div class="comment-card card">
+                                <p class="comment-text">"{{this.text}}"</p>
+                                <p class="comment-meta">
+                                    <small>Posted by: <strong>{{this.author}}</strong> on {{this.createdAt}}</small>
+                                    {{! Consider formatting this date using a helper or in the route }}
+                                    <button onclick="deleteComment({{this.id}})" class="delete-btn">Delete</button>
+                                </p>
+                            </div>
+                        {{/each}}
+                    {{else}}
+                        <p>No comments yet. Be the first!</p>
+                    {{/if}}
+    </div>
+
     <div class="actions">
         <a href="/comments" class="button">See What's New</a>
         <a href="/comment/new" class="button">Post Your Thoughts</a>
     </div>
 
 </div>
+
+<script>
+async function deleteComment(id) {
+  const confirmed = confirm('Are you sure you want to delete this comment?');
+  if (!confirmed) return;
+
+  const response = await fetch(`/comment/${id}`, {
+    method: 'DELETE'
+  });
+
+
+    window.location.href = '/profile'; // handle Express redirect
+
+}
+</script>

@@ -1,37 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+{{! backend/views/comments.hbs }}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Comments</title>
-</head>
+<div class="card comments-section">
+    <h2>Public Forum Comments 📣</h2>
 
-<body>
-    <h1>Comments</h1>
+    {{#if user.isLoggedIn}}
+        <div class="actions comment-actions">
+            <a href="/comment/new" class="button button-primary">Post a New Comment</a>
+        </div>
+    {{else}}
+        <p><a href="/login">Login</a> to post a comment.</p>
+    {{/if}}
 
-    <div class="card">
-        <h2>Comments</h2>
+    {{#if commentError}}
+        <p class="error-message">{{commentError}}</p>
+    {{/if}}
+
+    <hr>
+
+    <div class="comment-list">
         {{#if comments.length}}
-            <ul>
-                {{#each comments}}
-                    <li>
-                        <strong>{{this.author}}</strong>:<br />
-                        {{this.text}}
-                    </li>
-                {{/each}}
-            </ul>
+            {{#each comments}}
+                <div class="comment-card card">
+                    <p class="comment-text">"{{this.text}}"</p>
+                    <p class="comment-meta">
+                        <small>Posted by: <strong>{{this.author}}</strong> on {{this.createdAt}}</small>
+                    </p>
+                </div>
+            {{/each}}
         {{else}}
-            <p>No comments yet.</p>
+            <p>No comments yet!</p>
         {{/if}}
     </div>
-        {{#if user.isLoggedIn}}
-            <p>Welcome, {{user.name}}! You can add a new comment <a href="/comment/new">here</a>.</p>
-        {{else}}
-            <p>Please <a href="/login">log in</a> to add a comment.</p>
-        {{/if}}
-    </div>
-</body>
 
-</html>
+    {{!-- Pagination --}}
+    {{#if totalPages}}
+    <div class="pagination">
+        {{!-- Previous --}}
+        {{#if prevPage}}
+            <a href="/comments?page={{prevPage}}" class="button">Previous</a>
+        {{/if}}
+
+        {{!-- Page Numbers --}}
+        {{#each pages}}
+            {{#if this.isCurrent}}
+                <span class="page-number active">{{this.number}}</span>
+            {{else}}
+                <a href="/comments?page={{this.number}}" class="page-number">{{this.number}}</a>
+            {{/if}}
+        {{/each}}
+
+        {{!-- Next --}}
+        {{#if nextPage}}
+            <a href="/comments?page={{nextPage}}" class="button">Next</a>
+        {{/if}}
+    </div>
+    {{/if}}
+</div>

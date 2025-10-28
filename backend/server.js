@@ -3,12 +3,14 @@ const app = express();
 const session = require('express-session');
 const hbs = require('hbs'); 
 const path = require('path');
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 7101;
+
+COMMENT_ID_COUNTER = 1; // For comment IDs
 
 let users = [{ username: 'dean', password: '1234' }]; // Stores { username, password }
 let comments = [ // Stores { author, text }
-    { author: 'Alice', text: 'Howdy partner!' },
-    { author: 'Bob', text: 'This forum is mighty fine.' }
+    { id: COMMENT_ID_COUNTER, author: 'Alice', text: 'Howdy partner!', createdAt: new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'}) },
+    { id: COMMENT_ID_COUNTER+=1, author: 'Bob', text: 'This forum is mighty fine.', createdAt: new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'}) }
 ];
 // Authentication Check (using isLoggedIn)
 function ensureAuthenticated(req, res, next) {
@@ -99,32 +101,37 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    res.render('register');
+        return res.render('register', {
+            layout: 'layout/main', // If using layout
+            title: 'Register'
+        });
 });
 
 
-
-// Profile page - now requires login
 app.get('/profile', ensureAuthenticated, (req, res) => {
-// Construct the user object for the view
+
     const userViewModel = {
         name: req.session.username,
         isLoggedIn: req.session.isLoggedIn,
-        loginTime: req.session.loginTime, // Uncomment if you add loginTime to session
-        visitCount: req.session.visitCount += 1 || 0 // Uncomment if you add visitCount to session
+        loginTime: req.session.loginTime,
+        visitCount: req.session.visitCount += 1 || 0 
     };
 
+    const userComments = comments.filter(c => c.author === req.session.username);
+
+
     res.render('profile', {
-        layout: 'layout/main', // *** Specify the main layout ***
-        title: 'Your Profile', // Add a title
-        user: userViewModel    // Pass the user data object
+        layout: 'layout/main', 
+        title: 'Your Profile', 
+        user: userViewModel,
+        comments: userComments   
     });
 });
 
 
 // Login Page (GET)
 app.get('/login', (req, res) => {
-    if (req.session.isLoggedIn) { // Redirect if already logged in
+    if (req.session.isLoggedIn) {
             return res.redirect('/');
         }
         res.render('login', {
@@ -133,13 +140,12 @@ app.get('/login', (req, res) => {
         });
 });
 
-// Handle login form submission (no session functionality yet)
+// Login Handler (POST)
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
         if (!username || !password) {
             return res.render('login', {
-                // layout: 'layout/main', // If using layout
                 title: 'Login',
                 error: 'Username and password are required.'
             });
@@ -148,17 +154,15 @@ app.post('/login', (req, res) => {
         const user = users.find(u => u.username === username);
 
         if (user && user.password === password) {
-            // *** Set multiple properties on req.session ***
             req.session.isLoggedIn = true;
-            req.session.username = user.username; // Store the actual username
-            req.session.loginTime = new Date().toISOString(); // Optional
-            req.session.visitCount = 0; // Optional
+            req.session.username = user.username; 
+            req.session.loginTime = new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'}),
+            req.session.visitCount = 0; 
 
             console.log(`User ${username} logged in.`);
             res.redirect('/');
         } else {
             res.render('login', {
-            // layout: 'layout/main', // If using layout
                 title: 'Login',
                 error: 'Invalid username or password.'
             });
@@ -167,37 +171,87 @@ app.post('/login', (req, res) => {
 
 
 app.get('/comments', ensureAuthenticated, (req, res) => {
-    const userViewModel = {
-            name: req.session.username,
-            isLoggedIn: true
-        };
-        res.render('comments', { // Ensure comments.hbs exists
-            layout: 'layout/main',
-            title: 'Comments',
-            user: userViewModel,
-            comments: comments // *** Pass the GLOBAL comments array ***
-        });
+  const userViewModel = {
+    name: req.session.username,
+    isLoggedIn: true
+  };
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = 5;
+
+  // Reverse comments array for newest first
+  const reversedComments = [...comments].reverse();
+
+  const totalPages = Math.ceil(reversedComments.length / limit);
+  const currentPage = Math.max(1, Math.min(page, totalPages));
+
+  const startIndex = (currentPage - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  const paginatedComments = reversedComments.slice(startIndex, endIndex);
+
+  // Build numbered pages
+  const pages = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pages.push({ number: i, isCurrent: i === currentPage });
+  }
+
+  const prevPage = currentPage > 1 ? currentPage - 1 : null;
+  const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+
+  res.render('comments', {
+    layout: 'layout/main',
+    title: 'Comments',
+    user: userViewModel,
+    comments: paginatedComments,
+    pages,
+    currentPage,
+    totalPages,
+    prevPage,
+    nextPage
+  });
 });
+
 
 app.get('/comment/new', (req, res) => {
 const userViewModel = {
         name: req.session.username,
         isLoggedIn: true
     };
-    // Ensure you have a 'comment-new.hbs' view file
+
     res.render('comment-new', {
-        layout: 'layout/main', // Or your specific layout if different
+        layout: 'layout/main',
         title: 'New Comment',
         user: userViewModel
-        // Pass any error message if redirecting back here on POST error
-        // commentError: req.query.error // Example if using query params
     });
 });
 
-app.post('/comment', ensureAuthenticated, (req, res) => {
-const { comment } = req.body; // Get text from form field named 'comment'
+app.delete('/comment/:id', ensureAuthenticated, (req, res) => {
 
-    // Basic validation
+    
+
+    const commentId = parseInt(req.params.id, 10);
+    const commentIndex = comments.findIndex(c => c.id === commentId);
+
+    const comment = comments[commentIndex];
+    if (comment.author !== req.session.username) {
+        console.warn(
+        `Unauthorized delete attempt: ${req.session.username} tried to delete ${comment.author}'s comment (ID ${commentId})`
+        );
+        return res.status(403).send('You are not allowed to delete this comment.');
+    }
+
+    // ✅ If authorized, delete it
+    comments.splice(commentIndex, 1);
+    console.log(`Comment with ID ${commentId} deleted by ${req.session.username}`);
+    return res.redirect('/comments');
+});
+
+
+
+app.post('/comment', ensureAuthenticated, (req, res) => {
+const { comment } = req.body;
+
     if (!comment || comment.trim() === '') {
          // Re-render the page where the form is (e.g., '/comments') with an error
          const userViewModel = { name: req.session.username, isLoggedIn: true };
@@ -206,24 +260,22 @@ const { comment } = req.body; // Get text from form field named 'comment'
             title: 'Comments',
             user: userViewModel,
             comments: comments, // Still need to pass comments when re-rendering
-            commentError: 'Comment cannot be empty.' // Pass error message
+            commentError: 'Comment cannot be empty.'
         });
     }
 
-    // *** Add the new comment object to the GLOBAL comments array ***
     comments.push({
-        author: req.session.username, // Get author username from session
+        id: COMMENT_ID_COUNTER+=1,
+        author: req.session.username, 
         text: comment,
-        createdAt: new Date()        // Add timestamp
+        createdAt: new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'})    
     });
 
-    console.log(`New comment added by ${req.session.username}`);
-    res.redirect('/comments'); // Redirect back to the comments page to show the updated list
+    res.redirect('/comments');
 });
 
-// Logout route - Add this new route
 app.post('/logout', (req, res) => {
-    const username = req.session.username; // Get username before destroying
+    const username = req.session.username;
         req.session.destroy((err) => {
             if (err) {
                 console.error('Error destroying session:', err);
