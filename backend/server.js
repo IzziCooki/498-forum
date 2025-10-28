@@ -3,7 +3,7 @@ const app = express();
 const session = require('express-session');
 const hbs = require('hbs'); 
 const path = require('path');
-const PORT = process.env.PORT || 7101;
+const PORT = process.env.PORT || 8080;
 
 COMMENT_ID_COUNTER = 1; // For comment IDs
 
