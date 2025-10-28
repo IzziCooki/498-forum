@@ -1,4 +1,4 @@
-{{! backend/views/profile.hbs }}
+
 
 <div class="card profile-card">
     <h2>Your Sheriff Badge 🤠</h2>
@@ -13,7 +13,7 @@
         {{#if user.visitCount}}
             <p><small>Number of visits to town: {{user.visitCount}}</small></p>
         {{/if}}
-        {{! Note: loginTime and visitCount need to be set in the session during POST /login to display }}
+
     </div>
 
     <div>
@@ -25,7 +25,6 @@
                                 <p class="comment-text">"{{this.text}}"</p>
                                 <p class="comment-meta">
                                     <small>Posted by: <strong>{{this.author}}</strong> on {{this.createdAt}}</small>
-                                    {{! Consider formatting this date using a helper or in the route }}
                                     <button onclick="deleteComment({{this.id}})" class="delete-btn">Delete</button>
                                 </p>
                             </div>

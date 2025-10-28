@@ -2,17 +2,16 @@
     <h2>Welcome to the Wild West Forum! 🤠</h2>
 
     {{#if user.isLoggedIn}}
-        {{! Content for logged-in users }}
         <p>Howdy, {{user.name}}! Ready to join the discussion?</p>
         <div class="actions">
             <a href="/comments" class="button button-primary">View Comments</a>
             <a href="/comment/new" class="button">Post a New Comment</a>
             <a href="/profile" class="button button-secondary">View Profile</a>
         </div>
-        {{! Optional: Maybe show a few *recent* comments here later? }}
+
 
     {{else}}
-        {{! Content for guests }}
+
         <p>Welcome, stranger! Looks like you ain't logged in yet.</p>
         <p>Register or log in to post your own comments and join the community.</p>
         <div class="actions">
