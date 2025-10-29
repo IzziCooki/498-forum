@@ -50,6 +50,8 @@ The goal of this project is to build a simple web application that demonstrates 
 
 If you need to run the application on a different port, follow these steps:
 
+> **⚠️ Important Note:** Nginx ports and backend ports have to match each other across all files.
+
 ### Step 1: Update `docker-compose.yml`
 - **backend-nodejs service:**
   - Change `ports: - "8080:8080"` → `ports: - "DESIRED_PORT:DESIRED_PORT"`
@@ -61,19 +63,30 @@ If you need to run the application on a different port, follow these steps:
 ### Step 2: Update `nginx/Dockerfile`
 - Change `EXPOSE 80` → `EXPOSE DESIRED_PORT`
 
-### Step 3: Update `server.js`
+### Step 3: Update `nginx/default.conf`
+- Change `listen 80;` → `listen DESIRED_PORT;`
+- Change:
+  ```properties
+  proxy_pass http://backend-nodejs:8080;
+  ```
+  to:
+  ```properties
+  proxy_pass http://backend-nodejs:DESIRED_PORT;
+  ```
+
+### Step 4: Update `server.js`
 - Change `const PORT = process.env.PORT || 8080;` → `const PORT = process.env.PORT || DESIRED_PORT;`
 
-### Step 4: Update `backend/Dockerfile`
+### Step 5: Update `backend/Dockerfile`
 - Change `EXPOSE 8080` → `EXPOSE DESIRED_PORT`
 
-### Step 5: Rebuild and restart
+### Step 6: Rebuild and restart
 ```bash
 docker compose down
 docker compose up --build -d
 ```
 
-### Step 6: Access the application
+### Step 7: Access the application
 - Navigate to `http://your-server-ip:DESIRED_PORT`
 - Example: If you changed to port 3000, visit `http://your-server-ip:3000`
 
