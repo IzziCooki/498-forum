@@ -48,39 +48,34 @@ The goal of this project is to build a simple web application that demonstrates 
 
 ## 🔧 Changing the Port
 
-If you need to run the application on a different port:
+If you need to run the application on a different port, follow these steps:
 
-1. **Open `docker-compose.yml`**
+### Step 1: Update `docker-compose.yml`
+- **backend-nodejs service:**
+  - Change `ports: - "8080:8080"` → `ports: - "DESIRED_PORT:DESIRED_PORT"`
+  
+- **my-nginx-proxy service:**
+  - Change `ports: - "80:80"` → `ports: - "DESIRED_PORT:DESIRED_PORT"`
+  - **This is the port where the web app will display**
 
-2. **Change the Nginx port:**
-   - Find all instances of port `80` in the nginx service configuration
-   - Replace `80` with your desired port (e.g., `8080`, `3000`, etc.)
-   - Example:
-     ```yaml
-     ports:
-       - "8080:80"  # Change the first 80 to your desired port
-     ```
+### Step 2: Update `nginx/Dockerfile`
+- Change `EXPOSE 80` → `EXPOSE DESIRED_PORT`
 
-3. **Change the Express port (if needed):**
-   - Find all instances of port `8080` in the backend service configuration
-   - Replace `8080` with your desired backend port
-   - Example:
-     ```yaml
-     ports:
-       - "3001:8080"  # Change ports as needed
-     ```
+### Step 3: Update `server.js`
+- Change `const PORT = process.env.PORT || 8080;` → `const PORT = process.env.PORT || DESIRED_PORT;`
 
-4. **Important:** Whatever port you set for Nginx (the first number in the port mapping) is where the server will be accessible from your browser.
+### Step 4: Update `backend/Dockerfile`
+- Change `EXPOSE 8080` → `EXPOSE DESIRED_PORT`
 
-5. **Rebuild and restart:**
-   ```bash
-   docker compose down
-   docker compose up --build -d
-   ```
+### Step 5: Rebuild and restart
+```bash
+docker compose down
+docker compose up --build -d
+```
 
-6. **Access the application:**
-   - Navigate to `http://your-server-ip:YOUR_PORT`
-   - Example: If you changed to port 8080, visit `http://your-server-ip:8080`
+### Step 6: Access the application
+- Navigate to `http://your-server-ip:DESIRED_PORT`
+- Example: If you changed to port 3000, visit `http://your-server-ip:3000`
 
 ---
 
