@@ -12,6 +12,78 @@ The goal of this project is to build a simple web application that demonstrates 
 
 ---
 
+## 🚀 How to Run
+
+### Prerequisites
+- Docker and Docker Compose installed on your system
+- Access to a server or VPS with Docker installed
+
+### Steps to Launch
+1. **Build and start the containers:**
+   ```bash
+   docker compose up --build -d
+   ```
+
+2. **Access the application:**
+   - Navigate to the IP address of your server/VPS in your web browser
+   - Example: `http://your-server-ip`
+   - The application will be running on port 80 by default
+
+3. **Check container status:**
+   ```bash
+   docker compose ps
+   ```
+
+4. **View logs (if needed):**
+   ```bash
+   docker compose logs -f
+   ```
+
+5. **Stop the application:**
+   ```bash
+   docker compose down
+   ```
+
+---
+
+## 🔧 Changing the Port
+
+If you need to run the application on a different port:
+
+1. **Open `docker-compose.yml`**
+
+2. **Change the Nginx port:**
+   - Find all instances of port `80` in the nginx service configuration
+   - Replace `80` with your desired port (e.g., `8080`, `3000`, etc.)
+   - Example:
+     ```yaml
+     ports:
+       - "8080:80"  # Change the first 80 to your desired port
+     ```
+
+3. **Change the Express port (if needed):**
+   - Find all instances of port `8080` in the backend service configuration
+   - Replace `8080` with your desired backend port
+   - Example:
+     ```yaml
+     ports:
+       - "3001:8080"  # Change ports as needed
+     ```
+
+4. **Important:** Whatever port you set for Nginx (the first number in the port mapping) is where the server will be accessible from your browser.
+
+5. **Rebuild and restart:**
+   ```bash
+   docker compose down
+   docker compose up --build -d
+   ```
+
+6. **Access the application:**
+   - Navigate to `http://your-server-ip:YOUR_PORT`
+   - Example: If you changed to port 8080, visit `http://your-server-ip:8080`
+
+---
+
 ## ⚙️ Features
 
 ### 👤 User Accounts
@@ -55,3 +127,11 @@ comments = [
 sessions = [
   { user: "exampleUser", sessionId: "abc123", expires: new Date() }
 ];
+```
+
+---
+
+## 📝 Notes
+- This application is **intentionally insecure** for educational purposes
+- All data is stored in memory and will be lost when containers are stopped
+- Do not use this application in production or with real user data
