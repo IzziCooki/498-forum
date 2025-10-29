@@ -1,57 +1,66 @@
+<div class="container">
+    <div class="card profile-card">
+        <h2>Your Sheriff Badge 🤠</h2>
 
+        <div class="user-info">
+            <p><strong>Howdy, {{user.name}}!</strong></p>
+            <p>Welcome back to the saloon.</p>
 
-<div class="card profile-card">
-    <h2>Your Sheriff Badge 🤠</h2>
+            {{#if user.loginTime}}
+                <p><small>🕐 Last seen 'round these parts: {{user.loginTime}}</small></p>
+            {{/if}}
+            {{#if user.visitCount}}
+                <p><small>🎯 Number of visits to town: {{user.visitCount}}</small></p>
+            {{/if}}
+        </div>
 
-    <div class="user-info">
-        <p><strong>Howdy, {{user.name}}!</strong></p>
-        <p>Welcome back to the saloon.</p>
+        <div>
+            <h3>Your Comments 📝</h3>
 
-        {{#if user.loginTime}}
-            <p><small>Last seen 'round these parts: {{user.loginTime}}</small></p>
-        {{/if}}
-        {{#if user.visitCount}}
-            <p><small>Number of visits to town: {{user.visitCount}}</small></p>
-        {{/if}}
+            <div class="comment-list">
+                {{#if comments}}
+                    {{#each comments}}
+                        <div class="comment-card">
+                            <p class="comment-text">💬 "{{this.text}}"</p>
+                            <p class="comment-meta">
+                                <small>Posted on {{this.createdAt}}</small>
+                                <button onclick="deleteComment({{this.id}})" class="delete-btn">🗑️ Delete</button>
+                            </p>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        <p>🌵 No comments yet. Be the first to share!</p>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
 
+        <div class="actions">
+            <a href="/comments" class="button button-primary">See What's New</a>
+            <a href="/comment/new" class="button button-secondary">Post Your Thoughts</a>
+        </div>
     </div>
-
-    <div>
-        <h3>Your Comments 📝</h3>
-
-            {{#if comments}}
-                        {{#each comments}}
-                            <div class="comment-card card">
-                                <p class="comment-text">"{{this.text}}"</p>
-                                <p class="comment-meta">
-                                    <small>Posted by: <strong>{{this.author}}</strong> on {{this.createdAt}}</small>
-                                    <button onclick="deleteComment({{this.id}})" class="delete-btn">Delete</button>
-                                </p>
-                            </div>
-                        {{/each}}
-                    {{else}}
-                        <p>No comments yet. Be the first!</p>
-                    {{/if}}
-    </div>
-
-    <div class="actions">
-        <a href="/comments" class="button">See What's New</a>
-        <a href="/comment/new" class="button">Post Your Thoughts</a>
-    </div>
-
 </div>
 
 <script>
 async function deleteComment(id) {
-  const confirmed = confirm('Are you sure you want to delete this comment?');
-  if (!confirmed) return;
+    const confirmed = confirm('Are you sure you want to delete this comment?');
+    if (!confirmed) return;
 
-  const response = await fetch(`/comment/${id}`, {
-    method: 'DELETE'
-  });
+    try {
+        const response = await fetch(`/comment/${id}`, {
+            method: 'DELETE'
+        });
 
-
-    window.location.href = '/profile'; // handle Express redirect
-
+        if (response.ok) {
+            window.location.href = '/profile';
+        } else {
+            alert('Failed to delete comment. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error deleting comment:', error);
+        alert('An error occurred. Please try again.');
+    }
 }
 </script>

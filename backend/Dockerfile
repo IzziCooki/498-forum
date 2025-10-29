@@ -16,7 +16,7 @@ COPY . .
 # COPY public/ ./public/  # Remove this line if it exists
 
 # Expose port (internal to container network)
-EXPOSE 8080
+EXPOSE 7101
 
 # Start the application
 CMD ["node", "server.js"]
