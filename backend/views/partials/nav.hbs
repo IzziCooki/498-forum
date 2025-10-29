@@ -1,13 +1,11 @@
-
-
 <nav>
-  <a href="/">Home</a>
+  <a href="/" class="nav-home">🤠 Wild West Forum</a>
 
-  {{#if user.isLoggedIn}} 
-    <span>Welcome, {{user.name}}!</span> 
-    <a href="/profile">Profile</a> 
+  {{#if user.isLoggedIn}}
     <a href="/comments">Comments</a>
-    <form action="/logout" method="POST" style="display:inline;">
+    <a href="/profile">Profile</a>
+    <span>Howdy, {{user.name}}!</span> 
+    <form action="/logout" method="POST" style="display:inline; margin: 0;">
       <button type="submit" class="button button-logout">Logout</button> 
     </form>
   {{else}}

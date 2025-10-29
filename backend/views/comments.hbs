@@ -1,58 +1,60 @@
+<div class="container">
+    <div class="card comments-section">
+        <h2>Public Forum Comments 📣</h2>
 
-
-<div class="card comments-section">
-    <h2>Public Forum Comments 📣</h2>
-
-    {{#if user.isLoggedIn}}
-        <div class="actions comment-actions">
-            <a href="/comment/new" class="button button-primary">Post a New Comment</a>
-        </div>
-    {{else}}
-        <p><a href="/login">Login</a> to post a comment.</p>
-    {{/if}}
-
-    {{#if commentError}}
-        <p class="error-message">{{commentError}}</p>
-    {{/if}}
-
-    <hr>
-
-    <div class="comment-list">
-        {{#if comments.length}}
-            {{#each comments}}
-                <div class="comment-card card">
-                    <p class="comment-text">"{{this.text}}"</p>
-                    <p class="comment-meta">
-                        <small>Posted by: <strong>{{this.author}}</strong> on {{this.createdAt}}</small>
-                    </p>
-                </div>
-            {{/each}}
+        {{#if user.isLoggedIn}}
+            <div class="actions comment-actions">
+                <a href="/comment/new" class="button button-primary">Post a New Comment</a>
+            </div>
         {{else}}
-            <p>No comments yet!</p>
-        {{/if}}
-    </div>
-
-    {{!-- Pagination --}}
-    {{#if totalPages}}
-    <div class="pagination">
-        {{!-- Previous --}}
-        {{#if prevPage}}
-            <a href="/comments?page={{prevPage}}" class="button">Previous</a>
+            <p>👋 <a href="/login">Login</a> to post a comment and join the conversation.</p>
         {{/if}}
 
-        {{!-- Page Numbers --}}
-        {{#each pages}}
-            {{#if this.isCurrent}}
-                <span class="page-number active">{{this.number}}</span>
+        {{#if commentError}}
+            <p class="error-message">{{commentError}}</p>
+        {{/if}}
+
+        <hr>
+
+        <div class="comment-list">
+            {{#if comments.length}}
+                {{#each comments}}
+                    <div class="comment-card">
+                        <p class="comment-text">💬 "{{this.text}}"</p>
+                        <p class="comment-meta">
+                            <small>Posted by <strong>{{this.author}}</strong> on {{this.createdAt}}</small>
+                        </p>
+                    </div>
+                {{/each}}
             {{else}}
-                <a href="/comments?page={{this.number}}" class="page-number">{{this.number}}</a>
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    <p>🌵 No comments yet! Be the first to share your thoughts.</p>
+                </div>
             {{/if}}
-        {{/each}}
+        </div>
 
-        {{!-- Next --}}
-        {{#if nextPage}}
-            <a href="/comments?page={{nextPage}}" class="button">Next</a>
+        {{!-- Pagination --}}
+        {{#if totalPages}}
+        <div class="pagination">
+            {{!-- Previous --}}
+            {{#if prevPage}}
+                <a href="/comments?page={{prevPage}}" class="button">← Previous</a>
+            {{/if}}
+
+            {{!-- Page Numbers --}}
+            {{#each pages}}
+                {{#if this.isCurrent}}
+                    <span class="page-number active">{{this.number}}</span>
+                {{else}}
+                    <a href="/comments?page={{this.number}}" class="page-number">{{this.number}}</a>
+                {{/if}}
+            {{/each}}
+
+            {{!-- Next --}}
+            {{#if nextPage}}
+                <a href="/comments?page={{nextPage}}" class="button">Next →</a>
+            {{/if}}
+        </div>
         {{/if}}
     </div>
-    {{/if}}
 </div>

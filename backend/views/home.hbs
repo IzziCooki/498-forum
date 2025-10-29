@@ -1,23 +1,25 @@
-<div class="card welcome-card">
-    <h2>Welcome to the Wild West Forum! 🤠</h2>
+<div class="container">
+    <div class="card welcome-card">
+        <h2>Welcome to the Wild West Forum! 🤠</h2>
 
-    {{#if user.isLoggedIn}}
-        <p>Howdy, {{user.name}}! Ready to join the discussion?</p>
-        <div class="actions">
-            <a href="/comments" class="button button-primary">View Comments</a>
-            <a href="/comment/new" class="button">Post a New Comment</a>
-            <a href="/profile" class="button button-secondary">View Profile</a>
-        </div>
+        {{#if user.isLoggedIn}}
+            <p>Howdy, <strong>{{user.name}}</strong>! Ready to join the discussion?</p>
+            <p style="color: var(--text-muted);">Saddle up and share your thoughts with the community.</p>
+            
+            <div class="actions">
+                <a href="/comments" class="button button-primary">View Comments</a>
+                <a href="/comment/new" class="button button-secondary">Post a New Comment</a>
+                <a href="/profile" class="button">View Profile</a>
+            </div>
+        {{else}}
+            <p>Welcome, stranger! Looks like you ain't logged in yet.</p>
+            <p>Register or log in to post your own comments and join the community.</p>
+            
+            <div class="actions">
+                <a href="/register" class="button button-primary">Register</a>
+                <a href="/login" class="button button-secondary">Login</a>
+            </div>
 
-
-    {{else}}
-
-        <p>Welcome, stranger! Looks like you ain't logged in yet.</p>
-        <p>Register or log in to post your own comments and join the community.</p>
-        <div class="actions">
-            <a href="/login" class="button button-primary">Login</a>
-            <a href="/register" class="button button-secondary">Register</a>
-        </div>
-    {{/if}}
-
+        {{/if}}
+    </div>
 </div>

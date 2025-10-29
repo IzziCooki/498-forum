@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Comments</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <title>New Comment - Wild West Forum</title>
 </head>
-
 <body>
-    <h1>New Comment</h1>
-    <form action="/comment" method="POST">
-        <div>
-            <label for="comment">Comment:</label><br />
-            <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
+    <div class="container">
+        <h1>Wild West Forum</h1>
+        
+        <div class="card">
+            <h2>✍️ New Comment</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Share your thoughts with the community!</p>
+            
+            <form action="/comment" method="POST">
+                <div>
+                    <label for="comment">Your Comment</label>
+                    <textarea 
+                        id="comment" 
+                        name="comment" 
+                        rows="6" 
+                        placeholder="What's on your mind?" 
+                        required
+                    ></textarea>
+                </div>
+                
+                <div class="actions">
+                    <button type="submit" class="button button-primary">📤 Submit Comment</button>
+                    <a href="/comments" class="button">Cancel</a>
+                </div>
+            </form> 
         </div>
-        <div>
-            <button type="submit">Submit Comment</button>
-        </div>
-    </form> 
-
+    </div>
 </body>
-
 </html>
